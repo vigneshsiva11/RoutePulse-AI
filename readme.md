@@ -1,23 +1,63 @@
-# TRAFFIX — Smart Traffic Control with Ambulance Priority
+# RoutePulse AI
 
-TRAFFIX is a four-lane traffic-management prototype that uses computer vision to count vehicles, stream annotated camera footage, and select the lane that receives a green signal. When a custom ambulance detector confirms an emergency vehicle, the controller immediately prioritizes that lane and holds the route open briefly to tolerate missed video frames.
+> **From Emergency to Impact — Verify. Coordinate. Save Lives.**
 
-## Highlights
+RoutePulse AI is a safety-first emergency-corridor coordination platform built for the **iQOO Hackathon — Chennai Battle**. It addresses a simple but consequential problem: an ambulance loses time when traffic signals, pedestrians, and destination hospitals act independently rather than as one verified system.
 
-- Live MJPEG video streams for four traffic lanes
-- Vehicle counting with YOLOv8 (`car`, `motorcycle`, `bus`, and `truck`)
-- Ambulance-specific emergency detection—ordinary buses never trigger priority
-- Automatic signal selection based on traffic volume, overridden by ambulance priority
-- Web dashboard with lane state, vehicle counts, emergency alerts, and traffic charts
-- REST endpoints for status checks and manual signal-control testing
+This repository contains the working computer-vision and intersection-control prototype. It detects traffic and ambulances from lane feeds, publishes a live dashboard, and applies deterministic lane-priority logic. The larger RoutePulse vision extends this into a verified, multi-intersection corridor from emergency activation to hospital handoff.
 
-## How it works
+## The problem
+
+Emergency response is fragmented:
+
+- A signal can react at one intersection without coordinating the route ahead.
+- A blanket “green everything” response can create pedestrian and gridlock risk.
+- A single mistaken vehicle classification must not be able to trigger a corridor.
+
+RoutePulse AI replaces isolated pre-emption with a coordinated, verified, and safety-gated response.
+
+## Product vision: one verified corridor
 
 ```text
-Lane video → vehicle detector + ambulance detector → traffic controller → Flask API → React dashboard
+Emergency → Verification → Routing → Signals → Hospital handoff → Recovery
 ```
 
-The backend is the single source of truth for signal decisions. In normal operation, it opens the busiest lane. If the ambulance model detects an allowed emergency label, that lane receives priority for 30 seconds after the last detection. The frontend only displays the controller state; it does not make signal decisions.
+1. **Emergency:** receive camera, siren, GPS, or dispatch evidence.
+2. **Verification:** confirm the request through trusted signals before any plan is created.
+3. **Routing:** balance ambulance ETA with cross-traffic impact.
+4. **Signals:** reserve a staged corridor rather than issuing a blanket green.
+5. **Handoff:** select a hospital using capability and capacity information.
+6. **Recovery:** close the corridor and restore normal coordination.
+
+## Safety principles
+
+- **AI observes; a deterministic safety engine decides what is allowed.**
+- **Human operators retain override.**
+- **Emergency identity must be verified before priority is granted.**
+- **Pedestrian and conflict-zone checks must gate signal changes.**
+- **Every action should be auditable and safely abortable.**
+
+## What this prototype implements
+
+- Live MJPEG streams for four simulated traffic lanes
+- YOLOv8 vehicle counting (`car`, `motorcycle`, `bus`, and `truck`)
+- Ambulance-specific detection; ordinary buses never trigger emergency priority
+- Automatic lane selection based on observed traffic volume
+- Ambulance lane pre-emption with a short hold period for missed frames
+- React dashboard with lane state, vehicle counts, alerts, and charts
+- REST APIs for status monitoring and manual signal-control testing
+
+## Current prototype architecture
+
+```text
+Lane video → vehicle + ambulance models → deterministic lane policy → Flask API → React dashboard
+```
+
+The backend is the source of truth for signal decisions. In normal operation, it opens the busiest lane. When the ambulance model confirms an allowed emergency label, that lane receives priority for 30 seconds after the last detection. The frontend displays controller state; it does not decide signals.
+
+## Roadmap
+
+The presentation describes capabilities beyond this repository’s current prototype: multi-modal verification (siren, GPS, and dispatch), multi-intersection corridor reservation, pedestrian safety gates, routing, hospital readiness scoring, formal operator workflows, and citywide coordination. These are planned product directions, not claimed as implemented by the current codebase.
 
 ## Tech stack
 
@@ -134,8 +174,16 @@ Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:5000/control/change-light'
 
 - The standard COCO YOLOv8 model has no ambulance class; its `bus` class is **not** used to trigger an emergency signal.
 - Demo videos and custom model weights are intentionally listed in `.gitignore`. Share them separately with judges or host them in a release/cloud drive, then provide the download link here.
-- This is a hackathon prototype for simulation and demonstration—not a production traffic-control system.
+- This is a hackathon prototype for simulation and demonstration—not a production traffic-control system. Live deployment requires certified signal interfaces, privacy and security controls, safety validation, and operator procedures.
+
+## Illustrative impact
+
+The hackathon presentation models a corridor-delay reduction from **160 seconds to 58 seconds**—**102 seconds avoided**—while safely handling one pedestrian conflict and recording no unsafe transitions. These are illustrative simulation results from the pitch, not a benchmark reproduced by this repository.
 
 ## Team
 
-Built for the hackathon by the TRAFFIX team.
+**Team S2V**
+
+- Sudarsana M
+- Subhikshath S K
+- Vignesh S
