@@ -1,0 +1,14 @@
+﻿node_modules/
+__pycache__/
+venv/
+.env
+*.pyc
+.DS_Store
+
+# Local ML assets and demo footage
+.venv/
+Backend/models/*.pt
+Backend/videos/*.mp4
+weights/
+yolov8n.pt/
+yolov8s-worldv2.pt

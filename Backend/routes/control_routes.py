@@ -1,17 +1,7 @@
 from flask import Blueprint, request, jsonify
-from services.traffic_analyzer import TrafficAnalyzer
+from services.traffic_analyzer import traffic_service
 
 control_bp = Blueprint("control_bp", __name__)
-
-lane_videos = {
-    "lane1": "videos/lane1.mp4",
-    "lane2": "videos/lane2.mp4",
-    "lane3": "videos/lane3.mp4",
-    "lane4": "videos/lane4.mp4",
-}
-
-traffic_service = TrafficAnalyzer(lane_videos)
-
 
 # Get traffic light status
 @control_bp.route("/status", methods=["GET"])
